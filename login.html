@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login - AI Exam Monitoring</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+:root {
+    --bg-main: #1f2937;
+    --bg-box: #111827;
+    --input-bg: #374151;
+    --primary: #60a5fa;
+    --primary-hover: #3b82f6;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1f2937, #111827);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* TITLE */
+.main-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* CARD */
+.container {
+    background: rgba(17, 24, 39, 0.95);
+    padding: 45px;
+    border-radius: 16px;
+    width: 400px;
+    box-sizing: border-box;
+    color: white;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    text-align: center;
+    transition: 0.3s;
+}
+
+.container:hover {
+    transform: translateY(-3px);
+}
+
+/* LOGO */
+.logo {
+    font-size: 32px;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+/* HEADING */
+h2 {
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+/* INPUT GROUP */
+.input-box {
+    position: relative;
+    margin: 16px 0;
+}
+
+/* INPUT */
+input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    outline: none;
+    background: var(--input-bg);
+    color: white;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: 0.25s;
+}
+
+input::placeholder {
+    color: #d1d5db;
+}
+
+input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 8px rgba(96,165,250,0.4);
+}
+
+/* ICON */
+.input-box i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+}
+
+/* BUTTON */
+button {
+    width: 100%;
+    padding: 14px;
+    background: var(--primary);
+    border: none;
+    color: black;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    margin-top: 15px;
+    transition: 0.25s;
+}
+
+button:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+/* LINKS */
+a {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 14px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* FOOTER LINKS */
+.footer {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* MESSAGE */
+.message {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.success {
+    background: #064e3b;
+    color: #6ee7b7;
+}
+
+.danger {
+    background: #7f1d1d;
+    color: #fca5a5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="main-title">
+    <i class="fas fa-user-shield"></i> AI-Based Exam Monitoring System
+</div>
+
+<div class="container">
+
+    <div class="logo">
+        <i class="fas fa-sign-in-alt"></i>
+    </div>
+
+    <h2>Login</h2>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+
+        <div class="input-box">
+            <i class="fas fa-envelope"></i>
+            <input type="email" name="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="input-box">
+            <i class="fas fa-lock"></i>
+            <input type="password" name="password" placeholder="Enter your password" required>
+        </div>
+
+        <button type="submit">
+            <i class="fas fa-arrow-right-to-bracket"></i> Login
+        </button>
+
+    </form>
+
+    <div class="footer">
+        <a href="/register">Register</a>
+        <a href="/forgot_password">Forgot Password?</a>
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Exam Monitoring System</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- FLATPICKR -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/light.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: #3e3e3e;
+    color: #e5e7eb;
+}
+
+/* LAYOUT */
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+    width: 290px;
+    background: #1b1b1b;
+    padding: 20px;
+    border-right: 1px solid #232425;
+}
+
+.sidebar h2 {
+    color: #60a5fa;
+}
+
+/* SESSION CARD */
+.session-card {
+    background: #232323;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #3f3f3f;
+    margin: 15px 0;
+}
+
+.session-card h3 {
+    margin-bottom: 12px;
+}
+
+/* INPUT */
+.input-wrap {
+    position: relative;
+}
+
+.input-wrap i {
+    position: absolute;
+    top: 13px;
+    left: 12px;
+    color: #9ca3af;
+}
+
+input {
+    width: 100%;
+    padding: 11px 11px 11px 36px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #3f3f3f;
+    background: #2f2f2f;
+    color: white;
+    box-sizing: border-box;
+    transition: 0.25s;
+}
+
+input::placeholder {
+    color: #9ca3af;
+}
+
+input:focus {
+    border-color: #60a5fa;
+    box-shadow: 0 0 6px rgba(96,165,250,0.3);
+}
+
+/* BUTTONS */
+button {
+    width: 100%;
+    padding: 12px;
+    margin: 6px 0;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.25s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+.btn-blue { background: #425bca; color: white; }
+.btn-blue:hover { background: #1d4ed8; }
+
+.btn-gray { background: #334155; color: white; }
+.btn-gray:hover { background: #475569; }
+
+.btn-red { background: #ef4444; color: white; }
+.btn-red:hover { background: #dc2626; }
+
+/* MAIN */
+.main {
+    flex: 1;
+    padding: 20px;
+    background: #2b2b2b;
+}
+
+/* VIDEO */
+.video-box img {
+    width: 100%;
+    max-width: 760px;
+    border-radius: 12px;
+    border: 1px solid #3f3f3f;
+}
+
+/* CAMERA BUTTONS */
+.camera-buttons button {
+    width: auto;
+    margin: 6px;
+    padding: 10px 16px;
+    background: linear-gradient(135deg, #565656, #8a8a8b);
+    color: white;
+    border-radius: 8px;
+    transition: 0.3s;
+}
+
+.camera-buttons button:hover {
+    transform: scale(1.05);
+}
+
+/* PANELS */
+.panel {
+    margin-top: 20px;
+    background: #1f1f1f;
+    padding: 15px;
+    border-radius: 12px;
+}
+
+/* TABLE */
+.session-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed; /* 🔥 IMPORTANT */
+}
+
+.session-table th,
+.session-table td {
+    padding: 10px;
+    border-bottom: 1px solid #3f3f3f;
+    text-align: center;
+
+    word-wrap: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.session-table th:nth-child(1),
+.session-table td:nth-child(1) { width: 15%; }
+
+.session-table th:nth-child(2),
+.session-table td:nth-child(2) { width: 25%; }
+
+.session-table th:nth-child(3),
+.session-table td:nth-child(3) { width: 20%; }
+
+.session-table th:nth-child(4),
+.session-table td:nth-child(4) { width: 15%; }
+
+.session-table th:nth-child(5),
+.session-table td:nth-child(5) { width: 15%; }
+
+/* SNAPSHOTS */
+#images img {
+    width: 120px;
+    margin: 5px;
+    border-radius: 8px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+<h2><i class="fas fa-shield-alt"></i> AI Monitor</h2>
+
+<div class="session-card">
+    <h3> Create Session</h3>
+
+    <div class="input-wrap">
+        <i class="fas fa-tag"></i>
+        <input type="text" id="sessionName" placeholder="Session Name">
+    </div>
+
+    <div class="input-wrap">
+        <i class="fas fa-align-left"></i>
+        <input type="text" id="sessionDesc" placeholder="Description">
+    </div>
+
+    <div class="input-wrap">
+        <input type="text" id="startTime" placeholder="Start Date & Time">
+    </div>
+
+    <div class="input-wrap">
+        <input type="text" id="endTime" placeholder="End Date & Time">
+    </div>
+
+    <button class="btn-blue" onclick="createSession()">
+        <i class="fas fa-plus"></i> Create Session
+    </button>
+</div>
+
+<button class="btn-gray" onclick="showLogs()">
+    <i class="fas fa-list"></i> Logs
+</button>
+
+<button class="btn-gray" onclick="showSnapshots()">
+    <i class="fas fa-image"></i> Snapshots
+</button>
+
+<button class="btn-gray" onclick="showSessions()">
+    <i class="fas fa-history"></i> Session History
+</button>
+
+<hr style="border-color:#3f3f3f;">
+
+<button class="btn-red" onclick="logout()">
+    <i class="fas fa-sign-out-alt"></i> Logout
+</button>
+
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<h2><i class="fas fa-video"></i> Live Monitoring</h2>
+
+<div class="video-box">
+    <img id="videoFeed" src="/video_feed/1">
+</div>
+
+<div class="camera-buttons">
+    <button onclick="switchCam(1)">Cam 1</button>
+    <button onclick="switchCam(2)">Cam 2</button>
+    <button onclick="switchCam(3)">Cam 3</button>
+    <button onclick="switchCam(4)">Cam 4</button>
+</div>
+
+<!-- LOGS -->
+<div class="panel" id="logsPanel">
+    <h4><i class="fas fa-list"></i> Logs</h4>
+</div>
+
+<!-- SNAPSHOTS -->
+<div class="panel" id="snapshotPanel" style="display:none;">
+    <h4><i class="fas fa-image"></i> Snapshots</h4>
+    <div id="images"></div>
+</div>
+
+<!-- SESSION HISTORY -->
+<div class="panel" id="sessionPanel" style="display:none;">
+    <h4><i class="fas fa-history"></i> Session History</h4>
+
+    <input type="text" id="searchInput" placeholder="Search..." oninput="searchSessions()">
+
+    <table class="session-table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Session</th>
+                <th>Status</th>
+                <th>Download</th>
+            </tr>
+        </thead>
+        <tbody id="sessions"></tbody>
+    </table>
+</div>
+
+</div>
+</div>
+
+<!-- SNAPSHOT MODAL -->
+<div id="imgModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;">
+
+    <span onclick="closeModal()" style="
+        position:absolute;
+        top:20px;
+        right:30px;
+        font-size:30px;
+        color:white;
+        cursor:pointer;">&times;</span>
+
+    <img id="modalImg" style="
+        max-width:90%;
+        max-height:90%;
+        border-radius:10px;">
+</div>
+
+
+<script>
+
+/* DATE PICKER (same format as app.py expects) */
+flatpickr("#startTime", { enableTime: true, dateFormat: "Y-m-d h:i K" });
+flatpickr("#endTime", { enableTime: true, dateFormat: "Y-m-d h:i K" });
+
+/* PANEL CONTROL */
+function hideAll(){
+    document.getElementById("logsPanel").style.display="none";
+    document.getElementById("snapshotPanel").style.display="none";
+    document.getElementById("sessionPanel").style.display="none";
+}
+
+/* CAMERA */
+function switchCam(id){
+    document.getElementById("videoFeed").src = `/video_feed/${id}`;
+}
+
+function createSession(){
+
+    let name = document.getElementById("sessionName").value.trim();
+    let desc = document.getElementById("sessionDesc").value.trim();
+    let start = document.getElementById("startTime").value.trim();
+    let end = document.getElementById("endTime").value.trim();
+
+    if(!name || !start || !end){
+        alert("Please fill all required fields");
+        return;
+    }
+
+    fetch("/create_session", {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+            name: name,
+            description: desc,
+            start_time: start,
+            end_time: end
+        })
+    })
+    .then(res => res.text())
+    .then(msg => {
+        alert(msg);
+
+        if(msg.toLowerCase().includes("created")){
+            document.getElementById("sessionName").value="";
+            document.getElementById("sessionDesc").value="";
+            document.getElementById("startTime").value="";
+            document.getElementById("endTime").value="";
+        }
+    })
+    .catch(err=>{
+        alert("Error creating session");
+        console.error(err);
+    });
+}
+
+/* LOGS */
+function showLogs(){
+    hideAll();
+    document.getElementById("logsPanel").style.display="block";
+
+    fetch("/api/logs")
+    .then(res=>res.json())
+    .then(data=>{
+        document.getElementById("logsPanel").innerHTML =
+            "<h4><i class='fas fa-list'></i> Logs</h4>" +
+            data.map(l=>`<p>${l.status} - ${l.created_at}</p>`).join("");
+    });
+}
+
+/* SNAPSHOTS */
+function showSnapshots(){
+    hideAll();
+    document.getElementById("snapshotPanel").style.display="block";
+
+    fetch("/api/snapshots")
+    .then(res=>res.json())
+    .then(data=>{
+        document.getElementById("images").innerHTML =
+           data.map(i=>`
+    <img src="${i}" onclick="openModal('${i}')" style="cursor:pointer;">
+`).join("");
+    });
+}
+
+function openModal(src){
+    document.getElementById("imgModal").style.display = "flex";
+    document.getElementById("modalImg").src = src;
+}
+
+function closeModal(){
+    document.getElementById("imgModal").style.display = "none";
+}
+
+/* SESSIONS */
+let allSessions=[];
+
+function showSessions(){
+    hideAll();
+    document.getElementById("sessionPanel").style.display="block";
+
+    fetch("/api/sessions")
+    .then(res=>res.json())
+    .then(data=>{
+        allSessions=data;
+        displaySessions(data);
+    });
+}
+
+function formatDate(dateStr){
+    let d = new Date(dateStr);
+
+    return d.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+    });
+}
+
+function formatTime(dateStr){
+    let d = new Date(dateStr);
+
+    return d.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
+}
+
+function displaySessions(data){
+    document.getElementById("sessions").innerHTML = data.map(s=>`
+        <tr>
+            <td>${s.session_date}</td>
+            <td>${s.start_time} - ${s.end_time}</td>
+            <td>${s.name}</td>
+            <td>${s.status}</td>
+            <td>
+                ${s.report_path 
+                    ? `<button onclick="downloadSession(${s.id})">Download</button>` 
+                    : "N/A"}
+            </td>
+        </tr>
+    `).join("");
+}
+
+function searchSessions(){
+
+    let val = document.getElementById("searchInput").value.trim();
+
+    if(val === ""){
+        displaySessions(allSessions);
+        return;
+    }
+
+    fetch(`/api/search_sessions?q=${encodeURIComponent(val)}`)
+    .then(res=>res.json())
+    .then(data=>{
+        displaySessions(data);
+    });
+}
+
+/* DOWNLOAD */
+function downloadSession(id){
+    window.location.href = `/download_report/${id}`;
+}
+
+/* LOGOUT */
+function logout(){
+    window.location.href="/logout";
+}
+
+</script>
+
+</body>
+</html>
